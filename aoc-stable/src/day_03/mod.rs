@@ -1,3 +1,39 @@
+use std::ops::{Shl};
+
+#[inline]
+fn calc_amount(a: char) -> u32 {
+    let result = a as u32;
+    if result > 96 {
+        result - 96
+    } else {
+        result - 38
+    }
+
+}
+
+#[inline]
+fn translate_slice(slice: &str) -> u64 {
+    let mut amount = 0u64;
+
+    for x in slice.chars() {
+        amount |= 1u64.shl(calc_amount(x));
+    }
+
+    amount
+}
+
+#[inline]
+fn pos_of_first_one(n: u64) -> u32 {
+    let mut position = 0u32;
+    let mut m = 1u64;
+
+    while (n & m) == 0 {
+        m <<= 1;
+        position+=1;
+    }
+
+    return position;
+}
 
 
 #[inline]
@@ -6,26 +42,14 @@ pub fn first_part() -> u32 {
         .lines()
         .map(|line| {
             let (rug_a, rug_b) = line.split_at(line.len() / 2);
-            for a in rug_a.chars() {
-                for b in rug_b.chars() {
-                    if a == b {
-                        return calc_amount(a)
-                    }
-                }
-            }
-            1
+
+            let a = translate_slice(rug_a);
+            let b = translate_slice(rug_b);
+
+            pos_of_first_one(a & b)
+
         })
-        .sum()
-}
-
-fn calc_amount(a: char) -> u32 {
-    let result = a as u32;
-    if result > 96 {
-        (a as u32 - 96)
-    } else {
-        (a as u32 - 64) + 26
-    }
-
+        .sum::<u32>()
 }
 
 #[inline]
@@ -34,19 +58,15 @@ pub fn second_part() -> u32 {
         .lines()
         .collect::<Vec<&str>>();
 
-    let mut amounts = vec![];
+    let mut amount = 0u32;
     for i in (0..x.len()).step_by(3) {
-        let (bag_a, bag_b, bag_c) = (x[i], x[i+1], x[i+2]);
-        'search_loop: for a in bag_a.chars() {
-            for b in bag_b.chars() {
-                for c in bag_c.chars() {
-                    if a == b && b == c{
-                        amounts.push(calc_amount(a));
-                        break 'search_loop;
-                    }
-                }
-            }
-        }
+        let (rug_a, rug_b, rug_c) = (x[i], x[i+1], x[i+2]);
+
+        let a = translate_slice(rug_a);
+        let b = translate_slice(rug_b);
+        let c = translate_slice(rug_c);
+
+        amount += pos_of_first_one(a & b & c);
     }
-    amounts.iter().sum()
+    amount
 }
