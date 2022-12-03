@@ -54,19 +54,18 @@ pub fn first_part() -> u32 {
 
 #[inline]
 pub fn second_part() -> u32 {
-    let x =include_str!("input.txt")
+    include_str!("input.txt")
         .lines()
-        .collect::<Vec<&str>>();
-
-    let mut amount = 0u32;
-    for i in (0..x.len()).step_by(3) {
-        let (rug_a, rug_b, rug_c) = (x[i], x[i+1], x[i+2]);
-
-        let a = translate_slice(rug_a);
-        let b = translate_slice(rug_b);
-        let c = translate_slice(rug_c);
-
-        amount += pos_of_first_one(a & b & c);
-    }
-    amount
+        .map(|slice| { translate_slice(slice) })
+        .collect::<Vec<u64>>()
+        .chunks(3)
+        .fold(0, |sum, chunk| {
+            sum + pos_of_first_one(
+                chunk
+                    .into_iter()
+                    .fold(u64::MAX, |acc, e| {
+                        acc & e
+                    })
+            )
+        })
 }
