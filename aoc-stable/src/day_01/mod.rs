@@ -1,14 +1,15 @@
+use std::str::FromStr;
+use rayon::prelude::ParallelSliceMut;
+
 #[inline]
 pub fn first_part() -> u32 {
-    let x = include_str!("input.txt").lines();
-
     let mut amount = 0;
     let mut highest = 0;
 
-    for x in x {
-        match x.parse::<u32>() {
-            Ok(calories) => {
-                amount += calories
+    for x in include_str!("input.txt").lines() {
+        match u32::from_str(x) {
+            Ok(calories) => { // safe because acc always contains a value
+                amount += calories;
             }
             Err(_) => {
                 if amount > highest {
@@ -19,28 +20,25 @@ pub fn first_part() -> u32 {
         }
     }
 
-    highest
+   highest
 }
 
 #[inline]
 pub fn second_part() -> u32 {
-    let x = include_str!("input.txt").lines();
-    let mut amount = 0;
-    let mut amounts = vec![];
+    let mut acc = vec![0];
 
-    for x in x {
-        match x.parse::<u32>() {
-            Ok(calories) => {
-                amount += calories
+    for x in include_str!("input.txt").lines() {
+        match u32::from_str(x) {
+            Ok(calories) => unsafe { // safe because acc always contains a value
+                *acc.last_mut().unwrap_unchecked() += calories;
             }
             Err(_) => {
-                amounts.push(amount);
-                amount = 0;
+                acc.push(0);
             }
         }
     }
 
-    amounts.sort();
+    acc.sort_unstable();
 
-    amounts[amounts.len() - 3..amounts.len()].iter().sum::<u32>()
+    acc.iter().rev().take(3).sum()
 }

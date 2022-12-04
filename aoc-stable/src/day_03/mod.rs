@@ -41,15 +41,14 @@ pub fn first_part() -> u32 {
     include_str!("input.txt")
         .lines()
         .map(|line| {
-            let (rug_a, rug_b) = line.split_at(line.len() / 2);
+            let splitpoint = line.len() / 2;
 
-            let a = translate_slice(rug_a);
-            let b = translate_slice(rug_b);
+            let a = translate_slice(&line[..splitpoint]);
+            let b = translate_slice(&line[splitpoint..]);
 
             pos_of_first_one(a & b)
-
         })
-        .sum::<u32>()
+        .sum()
 }
 
 #[inline]
@@ -57,15 +56,8 @@ pub fn second_part() -> u32 {
     include_str!("input.txt")
         .lines()
         .map(|slice| { translate_slice(slice) })
-        .collect::<Vec<u64>>()
-        .chunks(3)
-        .fold(0, |sum, chunk| {
-            sum + pos_of_first_one(
-                chunk
-                    .into_iter()
-                    .fold(u64::MAX, |acc, e| {
-                        acc & e
-                    })
-            )
-        })
+        .collect::<Vec<_>>()
+        .chunks_exact(3)
+        .map(|x| pos_of_first_one(x[0] & x[1] & x[2]))
+        .sum()
 }

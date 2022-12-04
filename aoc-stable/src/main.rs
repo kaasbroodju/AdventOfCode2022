@@ -4,7 +4,7 @@ mod day_03;
 mod day_04;
 
 // change this use for different days
-use day_04::*;
+use day_03::*;
 
 fn main() {
     println!("first part: {:?}", first_part());
