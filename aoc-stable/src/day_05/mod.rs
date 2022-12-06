@@ -11,12 +11,16 @@ pub fn first_part() -> String {
     let mut stack = lines
         .by_ref()
         .take(AMOUNT_OF_START_LINES)
-        .fold(vec![vec![]; AMOUNT_OF_BUCKETS], |mut acc, line| {
-            for (pos, i) in (1..line.len()).step_by(4).enumerate() {
-                let x2 = &line[i..=i];
-                if x2 == " " { continue; }
-                acc[pos].insert(0, x2);
-            }
+        .fold(vec![Vec::with_capacity(AMOUNT_OF_BUCKETS * AMOUNT_OF_BUCKETS); AMOUNT_OF_BUCKETS], |mut acc, line| {
+            line
+                .chars()
+                .skip(1)
+                .step_by(4)
+                .enumerate()
+                .filter(|(_, c)| *c != ' ')
+                .for_each(|(pos, x)| {
+                    acc[pos].insert(0, x);
+                });
             acc
         });
 
@@ -41,15 +45,14 @@ pub fn first_part() -> String {
                 .collect::<Vec<_>>()
                 .iter()
                 .for_each(|x| {
-                    acc.get_mut(to).unwrap().push(x);
+                    acc.get_mut(to).unwrap().push(*x);
                 });
 
             acc
         })
         .iter()
         .fold(String::with_capacity(AMOUNT_OF_BUCKETS), |mut acc, row| {
-            let x1 = row.iter().last().unwrap();
-            acc.push_str(x1);
+            acc.push(*row.iter().last().unwrap());
             acc
         })
 }
@@ -65,12 +68,16 @@ pub fn second_part() -> String {
     let mut stack = lines
         .by_ref()
         .take(AMOUNT_OF_START_LINES)
-        .fold(vec![vec![]; AMOUNT_OF_BUCKETS], |mut acc, line| {
-            for (pos, i) in (1..line.len()).step_by(4).enumerate() {
-                let x2 = &line[i..=i];
-                if x2 == " " { continue; }
-                acc[pos].insert(0, x2);
-            }
+        .fold(vec![Vec::with_capacity(AMOUNT_OF_BUCKETS * AMOUNT_OF_BUCKETS); AMOUNT_OF_BUCKETS], |mut acc, line| {
+            line
+                .chars()
+                .skip(1)
+                .step_by(4)
+                .enumerate()
+                .filter(|(_, c)| *c != ' ')
+                .for_each(|(pos, x)| {
+                    acc[pos].insert(0, x);
+                });
             acc
         });
 
@@ -94,14 +101,14 @@ pub fn second_part() -> String {
                 .collect::<Vec<_>>()
                 .iter()
                 .for_each(|x| {
-                    acc.get_mut(to).unwrap().push(x);
+                    acc.get_mut(to).unwrap().push(*x);
                 });
 
             acc
         })
         .iter()
         .fold(String::with_capacity(AMOUNT_OF_BUCKETS), |mut acc, row| {
-            acc.push_str(row.iter().last().unwrap());
+            acc.push(*row.iter().last().unwrap());
             acc
         })
 }
