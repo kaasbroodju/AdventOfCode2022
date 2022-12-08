@@ -6,6 +6,7 @@ mod day_04;
 mod day_05;
 mod day_06;
 mod day_07;
+mod day_08;
 use day_01::*;
 use day_02::*;
 use day_03::*;
@@ -13,6 +14,7 @@ use day_04::*;
 use day_05::*;
 use day_06::*;
 use day_07::*;
+use day_08::*;
 
 pub fn criterion_benchmark(c: &mut Criterion) {
     // let mut day_01_group = c.benchmark_group("day 01");
@@ -51,11 +53,17 @@ pub fn criterion_benchmark(c: &mut Criterion) {
     //
     // day_06_group.finish();
 
-    let mut day_07_group = c.benchmark_group("day 07");
-    day_07_group.bench_function("first part", |b| b.iter(|| day_07::first_part()));
-    day_07_group.bench_function("second part", |b| b.iter(|| day_07::second_part()));
+    // let mut day_07_group = c.benchmark_group("day 07");
+    // day_07_group.bench_function("first part", |b| b.iter(|| day_07::first_part()));
+    // day_07_group.bench_function("second part", |b| b.iter(|| day_07::second_part()));
+    //
+    // day_07_group.finish();
 
-    day_07_group.finish();
+    let mut day_08_group = c.benchmark_group("day 08");
+    day_08_group.bench_function("first part", |b| b.iter(|| day_08::first_part()));
+    day_08_group.bench_function("second part", |b| b.iter(|| day_08::second_part()));
+
+    day_08_group.finish();
 }
 
 criterion_group!(benches, criterion_benchmark);

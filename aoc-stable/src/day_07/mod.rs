@@ -1,19 +1,17 @@
 use std::cell::RefCell;
 use std::collections::{HashMap};
-// use std::iter::{Enumerate, Map};
 use std::rc::Rc;
 use std::str::{FromStr};
-// use std::time::Instant;
 
 #[derive(PartialEq)]
-struct TreeNode {
+struct TreeNode<'a> {
     pub value: usize,
-    pub children: HashMap<String, Rc<RefCell<TreeNode>>>,
-    pub parent: Option<Rc<RefCell<TreeNode>>>,
+    pub children: HashMap<&'a str, Rc<RefCell<TreeNode<'a>>>>,
+    pub parent: Option<Rc<RefCell<TreeNode<'a>>>>,
 }
 
-impl TreeNode {
-    fn root() -> TreeNode {
+impl TreeNode<'static> {
+    fn root() -> TreeNode<'static> {
         TreeNode {
             value: 0,
             children: HashMap::new(),
@@ -65,12 +63,9 @@ pub fn first_part() -> usize {
                 }
             }
         } else if line[0] == "dir" {
-            {
-                if pwd.borrow().children.get(line[1]).is_some() {println!("already have")}
-            }
             let current_clone = Rc::clone(&pwd);
             let child = Rc::new(RefCell::new(TreeNode::new(current_clone)));
-            pwd.borrow_mut().children.insert(String::from(line[1]), Rc::clone(&child));
+            pwd.borrow_mut().children.insert(line[1], Rc::clone(&child));
         } else {
             pwd.borrow_mut().value += usize::from_str(line[0]).unwrap();
         }
@@ -155,7 +150,7 @@ pub fn second_part() -> usize {
         } else if line[0] == "dir" {
             let current_clone = Rc::clone(&pwd);
             let child = Rc::new(RefCell::new(TreeNode::new(current_clone)));
-            pwd.borrow_mut().children.insert(String::from(line[1]), Rc::clone(&child));
+            pwd.borrow_mut().children.insert(line[1], Rc::clone(&child));
         } else {
             pwd.borrow_mut().value += usize::from_str(line[0]).unwrap();
         }
