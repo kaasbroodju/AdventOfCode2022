@@ -1,25 +1,30 @@
+use std::borrow::BorrowMut;
+use rayon::prelude::*;
+
 #[inline]
 pub fn first_part() -> usize {
     const OFFSET: u32 = '0' as u32;
     let trees = include_str!("input.txt")
         .lines()
         .map(|line| {
-            line.chars().map(|c| u32::from(c) - OFFSET).collect::<Vec<u32>>()
-        }).collect::<Vec<Vec<u32>>>();
+            line.chars().map(|c| (u32::from(c) - OFFSET) as u8)
+        })
+        .flatten()
+        .collect::<Vec<u8>>();
 
-    let mut acc = 0;
-    for col in 0..trees.len() {
-        for row in 0..trees[col].len() {
-            if (0..row).into_iter().all(|i| trees[col][row] > trees[col][i])
-                || (row+1..trees.len()).into_iter().all(|i| trees[col][row] > trees[col][i])
-                || (0..col).into_iter().all(|i| trees[col][row] > trees[i][row])
-                || (col+1..trees[col].len()).into_iter().all(|i| trees[col][row] > trees[i][row]) {
-                acc += 1;
-            }
-        }
-    }
+    let length = trees.len();
+    let size = (length as f64).sqrt() as usize;
 
-    acc
+    (0..length)
+        .into_par_iter()
+        .zip(&trees)
+        .filter(|(i, x)| {
+            (*i-(*i % size)..*i).all(|index| **x > trees[index])
+            || ((*i % size)..*i).step_by(size).all(|index| **x > trees[index])
+            || (*i+1..*i-(*i % size)+size).all(|index| **x > trees[index])
+            || (*i+size..length).step_by(size).all(|index| **x > trees[index])
+        })
+        .count()
 }
 
 #[inline]
