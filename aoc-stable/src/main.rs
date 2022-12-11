@@ -16,5 +16,4 @@ use day_11::*;
 fn main() {
     println!("first part: {:?}", first_part());
     println!("second part: {:?}", second_part());
-    // println!("{}", first_part_opt());
 }
